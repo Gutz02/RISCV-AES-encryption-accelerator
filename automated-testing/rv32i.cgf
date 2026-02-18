@@ -1,0 +1,36 @@
+# For Licence details look at https://github.com/riscv-software-src/riscv-ctg/-/blob/master/LICENSE.incore
+
+addi:
+    config: 
+      - check ISA:=regex(.*I.*)
+    mnemonics: 
+      addi: 0
+    rs1: 
+      <<: *all_regs
+    rd: 
+      <<: *all_regs
+    op_comb: 
+      <<: *ifmt_op_comb
+    val_comb:
+      <<: [ *ifmt_val_comb_sgn, *base_rs1val_sgn, *ifmt_base_immval_sgn] 
+      abstract_comb:
+        'sp_dataset(xlen,["rs1_val",("imm_val",12)])': 0
+        <<: [*rs1val_walking, *ifmt_immval_walking]
+
+andi:
+    config: 
+      - check ISA:=regex(.*I.*)
+    mnemonics: 
+      andi: 0
+    rs1: 
+      <<: *all_regs
+    rd: 
+      <<: *all_regs
+    op_comb: 
+      <<: *ifmt_op_comb
+    val_comb:
+      <<: [*ifmt_val_comb_sgn , *base_rs1val_sgn , *ifmt_base_immval_sgn]
+      abstract_comb:
+        'sp_dataset(xlen,["rs1_val",("imm_val",12)])': 0
+        <<: [*rs1val_walking, *ifmt_immval_walking]
+

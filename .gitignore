@@ -1,0 +1,10 @@
+/vivado/
+/hardware/NONE/
+/.vscode/
+*.jou
+*.log
+*.Xil
+*.o
+*.dot
+aes.map
+/software/include/

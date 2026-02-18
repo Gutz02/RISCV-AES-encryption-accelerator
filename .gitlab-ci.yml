@@ -1,0 +1,43 @@
+stages:
+  - build
+  - test
+  - finish
+
+build-model:
+  stage: build
+  image: 
+    name: verilator/verilator
+    entrypoint: [""]
+  script:
+    - verilator -j 10 -O1 -CFLAGS "-g3 -O0" -Wno-WIDTH -Wno-UNUSED -Wno-LATCH -Wno-UNOPTFLAT -Wno-CASEINCOMPLETE -Wno-LITENDIAN -Wno-TIMESCALEMOD  -cc -DVL_TIME_CONTEXT  --build --exe -f filelist.f --top-module riscv_ooc_top_level_wrapper automated-testing/sim_main.cpp
+  artifacts: 
+    paths:
+      - obj_dir/Vriscv_ooc_top_level_wrapper
+
+
+
+test-job:
+  stage: test
+  image: 
+    name: magisterbrownie/myriscof:latest
+    entrypoint: [""]
+  script:
+    - ls
+    - ls obj_dir
+    - cd automated-testing
+    - riscof -v debug run --config=config.ini --suite=./arch-tests/ --env=./arch-tests/env 
+    - echo $? > ./riscof_work/any_err
+  artifacts:
+    when: always
+    paths:
+      - automated-testing/riscof_work/
+    expose_as: "Test Report"
+  environment:
+    name: report  
+    url: https://qce.pages.ewi.tudelft.nl/-/computer-engineering/computer-engineering/courses/pdp-processor-design-project/student-work/2024-2025/pdp-project-01/-/jobs/$CI_JOB_ID/artifacts/automated-testing/riscof_work/report.html
+
+#test-the-tests:
+#  image: python:3.11
+#  stage: finish
+#  script:
+#    - python3 -c "assert(int(open('./automated-testing/riscof_work/any_err').readline())==0)"
